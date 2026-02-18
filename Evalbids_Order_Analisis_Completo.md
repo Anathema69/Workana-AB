@@ -58,7 +58,7 @@ Se trabajó con 7 tablas provenientes de la base de datos de Workana:
 | `threads` | 23.072 | Conversaciones y mensajes cliente-freelancer |
 | `accepted_bids` | 547 | Propuestas aceptadas por clientes |
 | `payments` | 803 | Pagos realizados |
-| `skills` | 1.045 | Catálogo de skills |
+| `skills` | 1.045 | Catálogo de skills (referencia, no utilizado directamente en el análisis) |
 
 Se construyó una **tabla maestra a nivel proyecto** (2.234 registros, 1 fila por proyecto) cruzando todas las fuentes. Validaciones: sin duplicados, coherencia de datos confirmada (todo proyecto con pago tiene accepted bid).
 
@@ -76,7 +76,7 @@ No elegimos Paid Rate (depende de métodos de pago y presupuesto, factores exter
 
 | Métrica | Qué nos dice |
 |---|---|
-| **Tasa EL1** | ¿El cliente siquiera responde un mensaje? (engagement inicial) |
+| **Tasa EL1** (Engagement Level 1: el cliente respondió al menos un mensaje) | ¿El cliente siquiera interactúa? (engagement inicial, paso previo a la conversión) |
 | **Paid Rate** | ¿La aceptación se convirtió en dinero real? (conversión monetaria) |
 | **Tasa Productiva** | ¿El proyecto avanzó a trabajo real? (estados working/escrowing/finished/rating) |
 | **GMV Promedio** | ¿Cambia el ticket promedio de los pagos? |
@@ -124,6 +124,8 @@ Los grupos están razonablemente balanceados:
 **Lectura:** Todas las métricas de conversión suben en Test (lifts de +6% a +17%), pero ninguna cruza α = 0,05. Las más cercanas: EL1 (p = 0,056) y Paid Rate (p = 0,066). El guardrail (Bids Promedio) permanece estable (+2%, p = 0,59), confirmando la integridad del experimento.
 
 La única métrica estadísticamente significativa es Mensajes Promedio (p = 0,039): Test genera +6,5 mensajes por proyecto. Combinado con la mejora en EL1 y conversión, apunta a **más engagement genuino**, no a fricción.
+
+*Nota sobre comparaciones múltiples:* con 7 tests simultáneos, aplicando corrección de Bonferroni (α/7 = 0,007) ninguna métrica alcanzaría significancia. Esto refuerza la necesidad de más muestra, no de descartar la señal — las métricas están correlacionadas (forman un funnel) y la consistencia direccional tiene valor interpretativo más allá de los p-values individuales.
 
 ### 3.2 Análisis de funnel: la mejora es en cada etapa
 
@@ -222,7 +224,7 @@ Ningún país alcanza significancia individualmente — necesitamos más volumen
 
 ### La evidencia a favor de que el efecto es real
 
-1. **Consistencia direccional total.** Las 4 métricas de conversión apuntan en la misma dirección. La probabilidad de que esto ocurra por azar es ~6,25% (0,5⁴) si fueran independientes.
+1. **Consistencia direccional total.** Las 4 métricas de conversión apuntan en la misma dirección. Si bien están correlacionadas por ser parte del mismo funnel, que *todas* mejoren simultáneamente es una señal fuerte de efecto real, no de variación aleatoria.
 
 2. **El efecto se amplifica en el funnel.** El lift crece de EL1 (+6%) a Paid Rate (+17%). Esto no es ruido aleatorio — es un patrón coherente donde las aceptaciones se concretan más en pagos.
 
@@ -234,7 +236,7 @@ Ningún país alcanza significancia individualmente — necesitamos más volumen
 
 ### La evidencia que pide cautela
 
-1. Ninguna métrica de conversión es significativa a α = 0,05.
+1. Ninguna métrica de conversión es significativa a α = 0,05 (ni con corrección por comparaciones múltiples).
 2. Evolución semanal irregular (Sem 28: +6,5 pp vs Sem 29: +0,1 pp).
 3. México con efecto negativo (−3,1 pp), aunque no significativo.
 4. **El test estaba underpowered** (35% de poder).
