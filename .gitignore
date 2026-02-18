@@ -4,3 +4,4 @@ __pycache__/
 .ipynb_checkpoints/
 aux/
 .claude/
+output/informe_aux1.pdf
